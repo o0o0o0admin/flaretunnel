@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlareTunnel — Control Panel</title>
+    <link rel="icon" href="data:," />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/basecoat-lyra.cdn.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="./theme.css" />
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/basecoat.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/tabs.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/toast.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/select.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/sidebar.min.js"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/basecoat-css@1.0.2/dist/js/dropdown-menu.min.js"
+    ></script>
+  </head>
+  <body class="bg-background text-foreground">
+    <div class="flex min-h-screen">
+      <!-- Sidebar nav: 5 tabs, solid-filled items, bold active accent -->
+      <aside
+        class="w-60 shrink-0 border-r border-border bg-sidebar text-sidebar-foreground p-4 flex flex-col gap-1"
+      >
+        <div class="px-2 pb-4">
+          <h1 class="text-lg font-bold tracking-tight flex items-center gap-2">
+            <i class="ri-fire-line"></i>FlareTunnel
+          </h1>
+          <p class="text-xs text-muted-foreground">Cloudflare Worker Proxy</p>
+        </div>
+        <nav
+          id="main-nav"
+          class="flex flex-col gap-1"
+          aria-label="Panel sections"
+        >
+          <button class="nav-item active" data-tab="dashboard">
+            <i class="ri-dashboard-line"></i>Dashboard
+          </button>
+          <button class="nav-item" data-tab="accounts">
+            <i class="ri-user-settings-line"></i>Accounts
+          </button>
+          <button class="nav-item" data-tab="workers">
+            <i class="ri-cpu-line"></i>Workers
+          </button>
+          <button class="nav-item" data-tab="tunnel">
+            <i class="ri-rocket-line"></i>Tunnel
+          </button>
+          <button class="nav-item" data-tab="logs">
+            <i class="ri-file-list-line"></i>Logs
+          </button>
+          <button class="nav-item" data-tab="tests">
+            <i class="ri-flask-line"></i>Tests
+          </button>
+        </nav>
+        <div
+          class="mt-auto px-2 pt-4 text-xs text-muted-foreground"
+          id="sidebar-status"
+        >
+          API: http://localhost:8081
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="flex-1 min-w-0">
+        <div class="mx-auto max-w-6xl px-4 sm:px-6 py-6">
+          <section id="tab-dashboard" class="space-y-6" data-panel="dashboard">
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-dashboard-line"></i>Dashboard
+            </h2>
+            <div
+              class="grid grid-cols-2 sm:grid-cols-4 gap-4"
+              id="stat-cards"
+            ></div>
+            <div class="card p-6" id="tunnel-card"></div>
+          </section>
+
+          <section
+            id="tab-accounts"
+            class="space-y-4 hidden"
+            data-panel="accounts"
+          >
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-user-settings-line"></i>Cloudflare Accounts
+            </h2>
+            <div>
+              <button class="btn" data-variant="default" id="btn-add-account">
+                <i class="ri-add-line"></i> Add Account
+              </button>
+            </div>
+            <div class="grid gap-3" id="accounts-list"></div>
+          </section>
+
+          <section
+            id="tab-workers"
+            class="space-y-4 hidden"
+            data-panel="workers"
+          >
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-cpu-line"></i>Workers
+            </h2>
+            <div class="flex gap-2 flex-wrap">
+              <button
+                class="btn"
+                data-variant="default"
+                id="btn-create-workers"
+              >
+                <i class="ri-add-line"></i> Create Workers
+              </button>
+              <button class="btn" data-variant="outline" id="btn-test-workers">
+                <i class="ri-flask-line"></i> Test All
+              </button>
+              <button
+                class="btn"
+                data-variant="destructive"
+                id="btn-delete-all-workers"
+              >
+                <i class="ri-delete-bin-line"></i> Delete All
+              </button>
+            </div>
+            <div id="test-results"></div>
+            <div class="table-container">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>URL</th>
+                    <th class="text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="workers-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section id="tab-tunnel" class="space-y-4 hidden" data-panel="tunnel">
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-rocket-line"></i>Tunnel Configuration
+            </h2>
+            <div class="grid lg:grid-cols-2 gap-4">
+              <div class="card p-5 space-y-3">
+                <h3 class="font-semibold">Settings</h3>
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <label class="space-y-1 block"
+                    ><span class="text-xs text-muted-foreground">Host</span
+                    ><input id="t-host" class="input w-full" value="0.0.0.0"
+                  /></label>
+                  <label class="space-y-1 block"
+                    ><span class="text-xs text-muted-foreground">Port</span
+                    ><input
+                      id="t-port"
+                      type="number"
+                      class="input w-full"
+                      value="8080"
+                  /></label>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-3">
+                  <label class="space-y-1 block"
+                    ><span class="text-xs text-muted-foreground"
+                      >Rotation Mode</span
+                    >
+                    <select id="t-rotation" class="select w-full">
+                      <option value="round-robin">Round Robin</option>
+                      <option value="random">Random</option>
+                    </select>
+                  </label>
+                  <label class="space-y-1 block"
+                    ><span class="text-xs text-muted-foreground"
+                      >Blacklist File</span
+                    ><input
+                      id="t-blacklist"
+                      class="input w-full"
+                      value="blacklist-minimal.txt"
+                  /></label>
+                </div>
+                <div class="flex gap-4 pt-1 text-sm flex-wrap">
+                  <label class="flex items-center gap-2"
+                    ><input type="checkbox" id="t-verbose" class="checkbox" />
+                    Verbose Logging</label
+                  >
+                  <label class="flex items-center gap-2"
+                    ><input type="checkbox" id="t-nossl" class="checkbox" /> No
+                    SSL Intercept</label
+                  >
+                  <label class="flex items-center gap-2"
+                    ><input type="checkbox" id="t-allowip" class="checkbox" />
+                    Allow IP Access</label
+                  >
+                </div>
+                <div class="flex gap-2 pt-1">
+                  <button
+                    class="btn"
+                    data-variant="default"
+                    id="btn-save-tunnel"
+                  >
+                    <i class="ri-save-line"></i> Save Settings
+                  </button>
+                  <button
+                    class="btn"
+                    data-variant="outline"
+                    id="btn-reload-tunnel"
+                  >
+                    <i class="ri-refresh-line"></i> Reload
+                  </button>
+                </div>
+              </div>
+              <div class="card p-6" id="tunnel-card-2"></div>
+            </div>
+          </section>
+
+          <section id="tab-logs" class="space-y-4 hidden" data-panel="logs">
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-file-list-line"></i>Logs
+            </h2>
+            <div class="card overflow-hidden">
+              <pre
+                class="h-96 overflow-auto p-4 text-sm font-mono bg-transparent m-0"
+                id="logs-pre"
+              >
+No logs yet.</pre>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn" data-variant="outline" id="btn-refresh-logs">
+                <i class="ri-refresh-line"></i> Refresh
+              </button>
+              <button class="btn" data-variant="outline" id="btn-clear-logs">
+                <i class="ri-eraser-line"></i> Clear View
+              </button>
+            </div>
+          </section>
+
+          <section id="tab-tests" class="space-y-4 hidden" data-panel="tests">
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+              <i class="ri-flask-line"></i>Tests
+            </h2>
+            <div>
+              <button class="btn" data-variant="default" id="btn-run-all-tests">
+                <i class="ri-play-line"></i> Run All
+              </button>
+            </div>
+            <div class="text-sm text-muted-foreground" id="tests-status"></div>
+            <div class="grid lg:grid-cols-2 gap-4">
+              <div class="card p-5 space-y-3">
+                <h3 class="font-semibold flex items-center gap-2">
+                  <i class="ri-shield-check-line"></i>(a) Account validity
+                </h3>
+                <p class="text-sm text-muted-foreground">
+                  Checks every Cloudflare account token via the live analytics
+                  endpoint (a success entry means the token works).
+                </p>
+                <div>
+                  <button class="btn" data-variant="outline" id="btn-test-a">
+                    <i class="ri-play-line"></i> Run
+                  </button>
+                </div>
+                <div id="test-a-results" class="space-y-2 text-sm"></div>
+              </div>
+              <div class="card p-5 space-y-3">
+                <h3 class="font-semibold flex items-center gap-2">
+                  <i class="ri-repeat-line"></i>(b) Rotation check
+                </h3>
+                <p class="text-sm text-muted-foreground">
+                  Reads the configured rotation mode and asserts the probed
+                  workers span more than one distinct exit IP.
+                </p>
+                <div>
+                  <button class="btn" data-variant="outline" id="btn-test-b">
+                    <i class="ri-play-line"></i> Run
+                  </button>
+                </div>
+                <div id="test-b-results" class="space-y-2 text-sm"></div>
+              </div>
+              <div class="card p-5 space-y-3">
+                <h3 class="font-semibold flex items-center gap-2">
+                  <i class="ri-route-line"></i>(c) Tunneling check
+                </h3>
+                <p class="text-sm text-muted-foreground">
+                  Passes when at least one probed worker answers with an origin
+                  IP (traffic reaches the public internet).
+                </p>
+                <div>
+                  <button class="btn" data-variant="outline" id="btn-test-c">
+                    <i class="ri-play-line"></i> Run
+                  </button>
+                </div>
+                <div id="test-c-results" class="space-y-2 text-sm"></div>
+              </div>
+              <div class="card p-5 space-y-3">
+                <h3 class="font-semibold flex items-center gap-2">
+                  <i class="ri-global-line"></i>(d) Exit IP lookup
+                </h3>
+                <p class="text-sm text-muted-foreground">
+                  Enriches the exit IP of the selected worker (from the probe
+                  above) via free IP-info providers with fallbacks.
+                </p>
+                <label class="space-y-1 block"
+                  ><span class="text-xs text-muted-foreground">Worker</span
+                  ><select id="test-d-worker" class="select w-full"></select
+                ></label>
+                <div>
+                  <button class="btn" data-variant="outline" id="btn-test-d">
+                    <i class="ri-play-line"></i> Run
+                  </button>
+                </div>
+                <div id="test-d-results" class="space-y-2 text-sm"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Add Account dialog (native <dialog>, header/section/footer) -->
+    <dialog class="dialog" id="dlg-account">
+      <header>
+        <h3>Add Account</h3>
+        <p class="text-sm text-muted-foreground">
+          Store a Cloudflare account for worker deployment.
+        </p>
+      </header>
+      <section class="space-y-3">
+        <label class="space-y-1 block"
+          ><span class="text-xs text-muted-foreground">Account Name</span
+          ><input id="acc-name" class="input w-full" placeholder="my-account"
+        /></label>
+        <label class="space-y-1 block"
+          ><span class="text-xs text-muted-foreground">API Token</span
+          ><input
+            id="acc-token"
+            type="password"
+            class="input w-full"
+            placeholder="your-cloudflare-api-token"
+        /></label>
+        <label class="space-y-1 block"
+          ><span class="text-xs text-muted-foreground">Account ID</span
+          ><input
+            id="acc-id"
+            class="input w-full"
+            placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        /></label>
+      </section>
+      <footer>
+        <button class="btn" data-variant="outline" id="dlg-account-cancel">
+          Cancel
+        </button>
+        <button class="btn" data-variant="default" id="dlg-account-save">
+          <i class="ri-save-line"></i> Save
+        </button>
+      </footer>
+    </dialog>
+
+    <!-- Create Workers dialog -->
+    <dialog class="dialog" id="dlg-workers">
+      <header>
+        <h3>Create Workers</h3>
+        <p class="text-sm text-muted-foreground">
+          Deploy new Cloudflare workers.
+        </p>
+      </header>
+      <section class="space-y-3">
+        <label class="space-y-1 block"
+          ><span class="text-xs text-muted-foreground">Count</span
+          ><input
+            id="wk-count"
+            type="number"
+            min="1"
+            max="100"
+            value="1"
+            class="input w-full"
+        /></label>
+        <label class="space-y-1 block"
+          ><span class="text-xs text-muted-foreground">Account</span
+          ><select id="wk-account" class="select w-full"></select
+        ></label>
+        <label class="flex items-center gap-2 text-sm"
+          ><input type="checkbox" id="wk-distribute" class="checkbox" />
+          Distribute</label
+        >
+      </section>
+      <footer>
+        <button class="btn" data-variant="outline" id="dlg-workers-cancel">
+          Cancel
+        </button>
+        <button class="btn" data-variant="default" id="dlg-workers-create">
+          <i class="ri-add-line"></i> Create
+        </button>
+      </footer>
+    </dialog>
+
+    <div id="toaster" class="toaster"></div>
+    <script defer src="./app.js"></script>
+  </body>
+</html>

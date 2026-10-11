@@ -1,0 +1,35 @@
+# Full mode — tunnel proxy on host :18080, Basecoat panel + API on host :18081
+# Usage: docker compose up -d [--build]
+#
+# Runs the tunnel proxy on port 8080 AND the web control panel on port 8081.
+# Basecoat panel, REST API, and tunnel auto-start all available.
+
+services:
+  flaretunnel:
+    image: ghcr.io/o0o0o0admin/flaretunnel:v1.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flaretunnel
+    ports:
+      - "18080:8080"
+      - "18081:8081"
+    volumes:
+      - flaretunnel-data:/data
+      - ./flaretunnel.json:/data/flaretunnel.json
+      - ./blacklist-minimal.txt:/app/blacklist-minimal.txt:ro
+      - ./blacklist.txt:/app/blacklist.txt:ro
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - TZ=UTC
+      - FLARETUNNEL_DATA_DIR=/data
+      - TZ=UTC
+      - FLARETUNNEL_WORKERS=${FLARETUNNEL_WORKERS:-10}
+      - FLARETUNNEL_DISTRIBUTE=${FLARETUNNEL_DISTRIBUTE:-true}
+      - FLARETUNNEL_ROTATION=${FLARETUNNEL_ROTATION:-round-robin}
+      - FLARETUNNEL_VERBOSE=${FLARETUNNEL_VERBOSE:-false}
+
+volumes:
+  flaretunnel-data:

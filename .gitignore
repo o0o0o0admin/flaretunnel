@@ -1,0 +1,17 @@
+# Secrets & local state — never commit
+flaretunnel.json
+flaretunnel_*.json
+.env
+flaretunnel_ca.key
+flaretunnel_ca.crt
+
+# Build/runtime artifacts
+flaretunnel
+*.tar.gz
+release/
+web-next/
+.ruff_cache/
+
+# Vendored reference + tool state
+basecoat/
+.omo/
