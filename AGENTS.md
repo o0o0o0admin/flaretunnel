@@ -14,7 +14,7 @@ chmod +x flaretunnel && ./flaretunnel --api 8081   # binary runs only from REPO 
 # panel has NO build step — static files served by the binary (web-next/out is a symlink → ../web-basecoat)
 ```
 
-Panel changes: edit files in `web-basecoat/`, refresh browser. Verify with `curl -s localhost:8081/ | grep basecoat` and the API on :8081.
+Panel changes: edit files in `web-basecoat/`, refresh browser. Host run (`:8081`) serves them live via symlink; container (`:18081`) bakes a copy — rebuild after panel edits (`docker compose up -d --build`). Verify with `curl -s localhost:8081/ | grep basecoat` and the API on :8081.
 
 ## WHERE TO LOOK
 

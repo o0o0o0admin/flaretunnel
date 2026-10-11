@@ -255,7 +255,7 @@ function renderWorkers() {
         return (
           "<tr><td>" +
           esc(w.name) +
-          '</td><td><a class="underline" target="_blank" rel="noreferrer" href="' +
+          '</td><td class="break-all"><a class="underline break-all" target="_blank" rel="noreferrer" href="' +
           esc(w.url) +
           '">' +
           esc(w.url) +
@@ -465,6 +465,18 @@ async function handleCreateWorkers() {
     toast("Select an account", "err");
     return;
   }
+  var msg = distribute
+    ? "Create " +
+      count +
+      " worker(s) on EACH of " +
+      state.accounts.length +
+      " accounts (up to " +
+      count * state.accounts.length +
+      " workers)?"
+    : "Create " + count + ' worker(s) on "' + account + '"?';
+  if (!confirm(msg)) return;
+  var cbtn = document.getElementById("dlg-workers-create");
+  if (cbtn) cbtn.disabled = true;
   try {
     await api.createWorkers({
       count: count,
@@ -477,6 +489,8 @@ async function handleCreateWorkers() {
     loadDashboard();
   } catch (e) {
     toast(e.message, "err");
+  } finally {
+    if (cbtn) cbtn.disabled = false;
   }
 }
 
