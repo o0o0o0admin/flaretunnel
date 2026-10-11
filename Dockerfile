@@ -12,6 +12,8 @@ COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifica
 # Pre-built binary + static Basecoat panel (no build step; source: web-basecoat/)
 COPY --chmod=755 flaretunnel .
 COPY web-basecoat ./web-next/out
+# Seed config so bare `docker run` boots with zero accounts (mounts/env override it)
+COPY flaretunnel.empty.json ./flaretunnel.json
 
 # Persistent data (config, endpoints, tunnel settings, CA certs) -> /data volume
 VOLUME ["/data"]

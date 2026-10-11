@@ -1,0 +1,16 @@
+# Secrets & local state — keep out of the build context
+flaretunnel.json
+.env
+flaretunnel_ca.key
+flaretunnel_ca.crt
+flaretunnel_*.json
+
+# Local-only artifacts
+# NOTE: the `flaretunnel` binary itself is required build input — never ignore it
+*.tar.gz
+release/
+web-next/
+basecoat/
+.omo/
+.ruff_cache/
+.git/
