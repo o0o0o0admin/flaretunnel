@@ -1,5 +1,7 @@
 # FlareTunnel
 
+> Based on [MorDavid/FlareTunnel](https://github.com/MorDavid/FlareTunnel).
+
 Cloudflare Worker rotating proxy + Basecoat control panel in one container.
 Proxy → `:18080`, panel + API → `:18081`.
 
