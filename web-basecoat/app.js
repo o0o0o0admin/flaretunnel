@@ -1,6 +1,10 @@
 "use strict";
 /* FlareTunnel Basecoat panel — vanilla JS parity of web-next page.tsx + api.ts */
-var API_BASE = "http://localhost:8081/api";
+var API_BASE =
+  location.protocol +
+  "//" +
+  location.host +
+  "/api"; /* same-origin: panel is served by the API binary on :8081 or :18081 */
 
 function refreshBasecoat() {
   try {

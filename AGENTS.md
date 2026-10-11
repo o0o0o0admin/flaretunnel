@@ -54,7 +54,7 @@ Panel footguns: pinned CDN stack (`basecoat-css@1.0.2`, `@tailwindcss/browser@4`
 ## NOTES
 
 - `docker-compose.yml` header comment mentions `docker-compose.web.yml` (doesn't exist) and still says "Next.js UI" (stale, panel is Basecoat); just use `docker compose up -d --build`.
-- `app.js` hardcodes `API_BASE=http://localhost:8081` — panel opened via LAN/another host calls the browser's own localhost and breaks. One-line fix if remote access is ever needed.
+- `app.js` uses same-origin `API_BASE` (`location.host` + `/api`) — panel works on any host/port mapping, including `:18081` and LAN.
 - Ignore in searches: `basecoat/` (mirror), `.omo/` (tool runtime), `.ruff_cache/`, `*.tar.gz`, `flaretunnel` (binary).
 - `blacklist-minimal.txt` is the compose default; tunnel's `blacklist` field is a filename, not list content.
 - No build artifacts anymore: `web-basecoat/` is served as-is (in the image it lands at `./web-next/out`).

@@ -6,7 +6,7 @@
 
 services:
   flaretunnel:
-    image: ghcr.io/o0o0o0admin/flaretunnel:v1.0.0
+    image: ghcr.io/o0o0o0admin/flaretunnel:v1.0.1
     build:
       context: .
       dockerfile: Dockerfile

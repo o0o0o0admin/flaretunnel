@@ -13,7 +13,7 @@ cp .env.example .env
 docker compose pull && docker compose up -d
 ```
 
-Image: `ghcr.io/o0o0o0admin/flaretunnel:v1.0.0`. Or build locally: `docker compose up -d --build`.
+Image: `ghcr.io/o0o0o0admin/flaretunnel:v1.0.1`. Or build locally: `docker compose up -d --build`.
 
 ## Panel
 
